@@ -19,6 +19,8 @@
 #'   - `site_obs`: A data frame of site-level observations in long format.
 #'   - `site_sp`: A data frame of site-level data in wide format.
 #'
+#' @importFrom data.table .
+#'
 #' @export
 #'
 #' @examples
@@ -72,11 +74,6 @@ format_df <- function(data,
     match <- intersect(tolower(data_names), tolower(cols))
     if (length(match) == 0) return(NULL)
     names(data)[tolower(names(data)) %in% match]
-  }
-
-  # Define %||% operator if not already defined
-  `%||%` <- function(a, b) {
-    if (!is.null(a)) a else b
   }
 
   # Assign columns if not provided
@@ -137,13 +134,14 @@ format_df <- function(data,
     # Use data.table for faster pivoting
     dt <- data.table::as.data.table(site_obs)
 
-    # Summarize duplicates before pivoting using list() instead of .()
-    dt <- dt[, list(value = sum(value)), by = .(site_id, x, y, species)]
+    # Summarize duplicates before pivoting
+    # dt <- dt[, .(value = sum(value)), by = .(site_id, x, y, species)]
+    dt <- dt[, list(value = sum(value)), by = list(site_id, x, y, species)]
 
     # Convert to wide format
     site_sp <- data.table::dcast(dt, site_id + x + y ~ species, value.var = "value", fill = 0)
     site_sp <- as.data.frame(site_sp)
-    row.names(site_sp) <- make.unique(as.character(site_sp$site_id))
+    row.names(site_sp) <- site_sp$site_id
 
     return(list(site_obs = site_obs, site_sp = site_sp))
   }
@@ -165,7 +163,7 @@ format_df <- function(data,
       dplyr::group_by(site_id, x, y, dplyr::across(dplyr::any_of(extra_cols))) %>%
       dplyr::summarize(dplyr::across(all_of(sp_cols), ~ sum(.x, na.rm = TRUE)), .groups = "drop")
     site_sp <- as.data.frame(site_sp)
-    row.names(site_sp) <- make.unique(as.character(site_sp$site_id))
+    row.names(site_sp) <- site_sp$site_id
 
     return(list(site_sp = site_sp))
   }
