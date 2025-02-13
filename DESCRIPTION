@@ -16,3 +16,5 @@ Imports:
     data.table,
     dplyr,
     tidyr
+URL: https://github.com/BioMath-Lab/invasiMapR
+BugReports: https://github.com/BioMath-Lab/invasiMapR/issues
