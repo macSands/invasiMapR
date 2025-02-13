@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Sandra", "MacFadyen", , "sandra@biogis.co.za", role = c("aut", "cre"),
     comment = c(ORCID = '0000-0002-5316-440X'))
-Description: invasiMapR is an R package for analysing how specific trait interactions drive invasion risks
+Description: invasiMapR is an R package for analysing how trait interactions drive invasion risks
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
